@@ -3,15 +3,28 @@
 
 This is android library to add bubble shaped indicator to your App.
 
-Add Gradle dependency:
+## Add Gradle dependency:
 
-```gradl
+```gradle
 dependencies {
-   compile 'com.github.rey5137:material:1.2.4'
+   compile 'com.github.rahulpwar654:BubbleIndicator:1.0beta'
 }
 ```
 
 ## Code Example
+Add it in your root build.gradle at the end of repositories:
+```
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+
+
+
+
 ```
 public class MainActivity extends AppCompatActivity implements IndicatorClickListener {
 
@@ -37,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements IndicatorClickLis
 
 ```
 
-Add following XML snippet to your XML resource file
+## Add following XML snippet to your XML resource file
 ```
     <com.rahulpwar654.bubbleindicatorlibrary.NumberedIndicator
         android:id="@+id/numberedindicator"
@@ -52,6 +65,10 @@ Add following XML snippet to your XML resource file
 
 Want to contribute? You are welcome! 
 
+## Developed By
+------------
+
+* Rahul Pawar - <rahulpwar654@gmail.com>
 
 ## License
 
