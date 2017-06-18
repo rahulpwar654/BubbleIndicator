@@ -34,12 +34,12 @@ public class MainActivity extends AppCompatActivity implements IndicatorClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        NumberedIndicator numberedIndicator;
+       
         numberedIndicator= (NumberedIndicator) findViewById(R.id.numberedindicator);
         numberedIndicator.setBubbleNumbers(4);
         numberedIndicator.setBackgroundColor(Color.WHITE);
         numberedIndicator.setBubbleWidgetClickListener(this);
+	
     }
 
     @Override
