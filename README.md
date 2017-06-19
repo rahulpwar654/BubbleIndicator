@@ -1,24 +1,75 @@
 # BubbleIndicator
+[![](https://jitpack.io/v/rahulpwar654/BubbleIndicator.svg)](https://jitpack.io/#rahulpwar654/BubbleIndicator)
 
 
 This is android library to add bubble shaped indicator to your App.
 
+## Add Gradle dependency:
+
+```gradle
+dependencies {
+   compile 'com.github.rahulpwar654:BubbleIndicator:1.0beta'
+}
+```
+
 ## Code Example
+Add it in your root build.gradle at the end of repositories:
+```
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
 
 
-## Installation
 
-Provide code examples and explanations of how to get the project.
 
-## API Reference
+```
+public class MainActivity extends AppCompatActivity implements IndicatorClickListener {
 
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+    NumberedIndicator numberedIndicator;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+       
+        numberedIndicator= (NumberedIndicator) findViewById(R.id.numberedindicator);
+        numberedIndicator.setBubbleNumbers(4);
+        numberedIndicator.setBackgroundColor(Color.WHITE);
+        numberedIndicator.setBubbleWidgetClickListener(this);
+	
+    }
+
+    @Override
+    public void onBubbleClicked(int bubbleNum) {
+        Toast.makeText(this, ""+bubbleNum+" clicked ", Toast.LENGTH_SHORT).show();
+    }
+}
+
+```
+
+## Add following XML snippet to your XML resource file
+```
+    <com.rahulpwar654.bubbleindicatorlibrary.NumberedIndicator
+        android:id="@+id/numberedindicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+```
 
 
 
 ## Contributors
 
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
+Want to contribute? You are welcome! 
+
+## Developed By
+------------
+
+* Rahul Pawar - <rahulpwar654@gmail.com>
 
 ## License
 
