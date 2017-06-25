@@ -1,5 +1,4 @@
 # BubbleIndicator
-[![](https://jitpack.io/v/rahulpwar654/BubbleIndicator.svg)](https://jitpack.io/#rahulpwar654/BubbleIndicator)
 
 
 This is android library to add bubble shaped indicator to your App.
@@ -8,7 +7,7 @@ This is android library to add bubble shaped indicator to your App.
 
 ```gradle
 dependencies {
-   compile 'com.github.rahulpwar654:BubbleIndicator:1.0beta'
+   compile 'com.github.rahulpwar654:BubbleIndicator:0.1'
 }
 ```
 
