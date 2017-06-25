@@ -7,7 +7,7 @@ This is android library to add bubble shaped indicator to your App.
 
 ```gradle
 dependencies {
-   compile 'com.github.rahulpwar654:BubbleIndicator:0.1'
+    compile 'com.github.rahulpwar654:BubbleIndicator:1.2'
 }
 ```
 
