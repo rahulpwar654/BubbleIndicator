@@ -10,18 +10,21 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+/**
+ * Created by rahul.pawar on 21-06-2017.
+ */
 
-
-public class BubbleWidget  extends View{
-
+public class AllNumberedIndicator  extends View {
 
     private int desiredWidth = 300;
     private int desiredHeight = 60;
     private int cellwidth=0;
     private int bubbleNum=4;
+    private int  CompletedBubbleColor=Color.BLUE,
+            InCompleteBubbleColor=Color.GRAY,WorkingBubbleColor=Color.RED;
 
-    private BubbleWidgetClickListener bubbleWidgetClickListener;
-
+    private  boolean isDrawLine=true;
+    IndicatorClickListener mIndicatorClickListener;
     int selectedBubleNum=0;
 
 
@@ -33,24 +36,27 @@ public class BubbleWidget  extends View{
     private Paint mInnerCircle, mTextPaint,mTextPaintSmall;
     private Paint mPaintline,mPaintlineGray;
     private Paint mPaintGray;
+    private Paint mCompletePaint,mWorkingPaint,mInCompletePaint;
+
     private static final String singleChar="+";
     int txtSize= 0;
 
 
-    public BubbleWidget(Context context) {
+    public AllNumberedIndicator(Context context) {
         super(context);
         initialization();
     }
 
-    public BubbleWidget(Context context, AttributeSet attrs) {
+    public AllNumberedIndicator(Context context,  AttributeSet attrs) {
         super(context, attrs);
         initialization();
     }
 
-    public BubbleWidget(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AllNumberedIndicator(Context context,  AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initialization();
     }
+
 
     private void initialization() {
 
@@ -61,9 +67,6 @@ public class BubbleWidget  extends View{
         // mPaintPercent.setColor(Color.CYAN);
         mPaintPercent.setColor(Color.parseColor("#4AD562"));
 
-        mInnerCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mInnerCircle.setColor(Color.parseColor("#4AD562"));
-        mInnerCircle.setStrokeCap(Paint.Cap.ROUND);
 
         mPaintline = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintline.setColor(Color.parseColor("#4AD562"));
@@ -75,15 +78,23 @@ public class BubbleWidget  extends View{
         mPaintlineGray.setStrokeCap(Paint.Cap.SQUARE);
         mPaintlineGray.setStrokeWidth(5);
 
-
-
-        mOuterCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mOuterCircle.setColor(Color.parseColor("#4990E2"));
-        mOuterCircle.setStrokeCap(Paint.Cap.ROUND);
-
         mPaintGray = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintGray.setColor(Color.parseColor("#9B9B9B"));
         mPaintGray.setStrokeCap(Paint.Cap.ROUND);
+
+
+        //Bubble paint
+        mCompletePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCompletePaint.setColor(Color.BLUE);
+        mCompletePaint.setStrokeCap(Paint.Cap.ROUND);
+
+        mWorkingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mWorkingPaint.setColor(Color.RED);
+        mWorkingPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        mInCompletePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mInCompletePaint.setColor(Color.GRAY);
+        mInCompletePaint.setStrokeCap(Paint.Cap.ROUND);
 
 
 
@@ -106,46 +117,51 @@ public class BubbleWidget  extends View{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int xwidth=cellwidth;
-        /**
-         * Draw line first
-         */
-        if(selectedBubleNum!=0)
-        {
-            //blue line
-            canvas.drawLine(cellwidth,(desiredHeight/2),(cellwidth*(selectedBubleNum+1)),(desiredHeight/2),mPaintline);
-            //gray line
-            canvas.drawLine(cellwidth*(selectedBubleNum+1),(desiredHeight/2),(desiredWidth-cellwidth),(desiredHeight/2),mPaintlineGray);
-        }else{
-            canvas.drawLine(cellwidth,(desiredHeight/2),(desiredWidth-cellwidth),(desiredHeight/2),mPaintlineGray);
-        }
 
-
-        /**
-         * Draw circle
-         */
-        for(int i=0;i<bubbleNum;i++){
-
-            if(i<selectedBubleNum)
-            {
-                // canvas.drawLine(xwidth,(desiredHeight/2),(xwidth+cellwidth),(desiredHeight/2),mPaintline);
-                //canvas.drawCircle(xwidth, (desiredHeight / 2), largeBubbleRad, mOuterCircle);
-                canvas.drawCircle(xwidth, (desiredHeight / 2), smallBubbleRad, mInnerCircle);
-            }else
-            if(i==selectedBubleNum) {
-                //canvas.drawLine(xwidth,(desiredHeight/2),(xwidth+cellwidth),(desiredHeight/2),mPaintline);
-                canvas.drawCircle(xwidth, (desiredHeight / 2), largeBubbleRad, mOuterCircle);
-            }else{
-                canvas.drawCircle(xwidth, (desiredHeight / 2), smallBubbleRad, mPaintGray);
+        if(isDrawLine) {
+            /**
+             * Draw line first
+             */
+            if (selectedBubleNum != 0) {
+                //blue line
+                canvas.drawLine(cellwidth, (desiredHeight / 2), (cellwidth * (selectedBubleNum + 1)), (desiredHeight / 2), mPaintline);
+                //gray line
+                canvas.drawLine(cellwidth * (selectedBubleNum + 1), (desiredHeight / 2), (desiredWidth - cellwidth), (desiredHeight / 2), mPaintlineGray);
+            } else {
+                canvas.drawLine(cellwidth, (desiredHeight / 2), (desiredWidth - cellwidth), (desiredHeight / 2), mPaintlineGray);
             }
-            xwidth+=cellwidth;
         }
-
 
 
         int textWidth = (int) mTextPaintSmall.measureText(singleChar, 0, singleChar.length());
         int diff=textWidth/2;
-        canvas.drawText(""+(selectedBubleNum+1),(cellwidth*(selectedBubleNum+1)-diff),(desiredHeight/2)+(diff+4),mTextPaintSmall);
+
+        /**
+         * Draw circle
+         */
+        int xwidth=cellwidth;
+        for(int i=0;i<bubbleNum;i++){
+
+            if(i<selectedBubleNum)
+            {
+                //mOuterCircle.setColor(Color.BLUE);
+                canvas.drawCircle(xwidth, (desiredHeight / 2), largeBubbleRad, mCompletePaint);
+                canvas.drawText(""+(i+1),(xwidth-diff),((desiredHeight/2)+(diff+4)),mTextPaintSmall);
+            }else
+            if(i==selectedBubleNum) {
+                //mOuterCircle.setColor(Color.RED);
+                canvas.drawCircle(xwidth, (desiredHeight / 2), largeBubbleRad, mWorkingPaint);
+                canvas.drawText(""+(i+1),(xwidth-diff),((desiredHeight/2)+(diff+4)),mTextPaintSmall);
+            }else{
+                //mOuterCircle.setColor(Color.GRAY);
+                canvas.drawCircle(xwidth, (desiredHeight / 2), largeBubbleRad, mInCompletePaint);
+                canvas.drawText(""+(i+1),(xwidth-diff),((desiredHeight/2)+(diff+4)),mTextPaintSmall);
+            }
+
+            xwidth+=cellwidth;
+        }
+
+        //canvas.drawText(""+(selectedBubleNum+1),(cellwidth*(selectedBubleNum+1)-diff),(desiredHeight/2)+(diff+4),mTextPaintSmall);
        /* mCenterTextposition=cellwidth*(selectedBubleNum+1)-diff;*/
 
 
@@ -272,24 +288,21 @@ public class BubbleWidget  extends View{
                 float initialX = event.getX();
                 float initialY = event.getY();
 
-                Log.e("---"," x   "+initialX+"     y"+initialY);
-               //Log.d(TAG, "Action was DOWN");
+                //Log.e("---"," x   "+initialX+"     y"+initialY);
 
-                //if((initialX/cellwidth)>=1 && (initialX%cellwidth)<=smallBubbleRad )
-                //if((initialX/cellwidth)>=1)
-                if((initialX>(cellwidth-smallBubbleRad)))
+                if((initialX>(cellwidth-largeBubbleRad)))
                 {
-                   int pos = (int) (initialX/cellwidth);
+                    int pos = (int) (initialX/cellwidth);
 
                     if((initialX%cellwidth)>(cellwidth/2))
                         pos=pos+1;
 
-                    Log.e("---"," >=  "+((pos*cellwidth)-smallBubbleRad)+"     <= "+((pos*cellwidth)+smallBubbleRad));
-                    if(initialX>=((pos*cellwidth)-smallBubbleRad) && (initialX<((pos*cellwidth)+smallBubbleRad)))
+                    Log.e("---"," >=  "+((pos*cellwidth)-largeBubbleRad)+"     <= "+((pos*cellwidth)+largeBubbleRad));
+                    if(initialX>=((pos*cellwidth)-largeBubbleRad) && (initialX<((pos*cellwidth)+largeBubbleRad)))
                     {
-                        if (initialY > ((desiredHeight / 2) - smallBubbleRad) && initialY < ((desiredHeight / 2) + smallBubbleRad)) {
-                            if (bubbleWidgetClickListener != null) {
-                                bubbleWidgetClickListener.onBubbleClicked((pos-1));
+                        if (initialY > ((desiredHeight / 2) - largeBubbleRad) && initialY < ((desiredHeight / 2) + largeBubbleRad)) {
+                            if (mIndicatorClickListener != null) {
+                                mIndicatorClickListener.onBubbleClicked((pos-1));
                             }
                         }
                     }
@@ -298,7 +311,7 @@ public class BubbleWidget  extends View{
                 break;
 
             case MotionEvent.ACTION_MOVE:
-               // Log.d(TAG, "Action was MOVE");
+                // Log.d(TAG, "Action was MOVE");
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -329,25 +342,22 @@ public class BubbleWidget  extends View{
     }
 
 
-    /**
-     * getter setter for  Bubble click listener
-     * @return
-     */
-    public BubbleWidgetClickListener getBubbleWidgetClickListener() {
-        return bubbleWidgetClickListener;
+    public IndicatorClickListener getIndicatorClickListener() {
+        return mIndicatorClickListener;
     }
 
-    public void setBubbleWidgetClickListener(BubbleWidgetClickListener bubbleWidgetClickListener) {
-        this.bubbleWidgetClickListener = bubbleWidgetClickListener;
+    public void setIndicatorClickListener(IndicatorClickListener mIndicatorClickListener) {
+        this.mIndicatorClickListener = mIndicatorClickListener;
     }
 
-    /**
-     * Interface Bubble Clicklistener
-     */
-    public  interface BubbleWidgetClickListener {
 
-        void onBubbleClicked(int bubbleNum);
+    //
+    public boolean isDrawLine() {
+        return isDrawLine;
     }
 
+    public void setDrawLine(boolean drawLine) {
+        isDrawLine = drawLine;
+    }
 
 }

@@ -10,58 +10,50 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-/**
- * Created by warlord on 6/18/2017.
- */
 
-public class NumberedIndicator extends View {
+public class BubbleIndicator extends View {
+
 
     private int desiredWidth = 300;
     private int desiredHeight = 60;
-    private int cellwidth=0;
-    private int bubbleNum=4;
+    private int cellwidth = 0;
+    private int bubbleNum = 4;
 
-   private int  CompletedBubbleColor=Color.BLUE,
-                InCompleteBubbleColor=Color.GRAY,WorkingBubbleColor=Color.RED;
-
+    private int CompletedBubbleColor = Color.parseColor("#4AD562"),
+            InCompleteBubbleColor = Color.GRAY, WorkingBubbleColor = Color.RED;
+    private boolean isDrawLine = true;
 
     private IndicatorClickListener mIndicatorClickListener;
 
-    int selectedBubleNum=0;
+    int selectedBubleNum = 0;
 
 
-    private int largeBubbleRad=0;
-    private int smallBubbleRad=0;
+    private int largeBubbleRad = 0;
+    private int smallBubbleRad = 0;
 
     private Paint mPaintOuter;
-    private Paint mPaintPercent ;
-    private Paint  mTextPaint,mTextPaintSmall;
-    private Paint mPaintline,mPaintlineGray;
-    private Paint mCompletePaint,mWorkingPaint,mInCompletePaint;
-    private static final String singleChar="+";
-    int txtSize= 0;
+    private Paint mPaintPercent, mWorkingPaint;
+    private Paint mCompletePaint, mTextPaint, mTextPaintSmall;
+    private Paint mPaintline, mPaintlineGray;
+    private Paint mInCompletePaint;
+    private static final String singleChar = "+";
+    int txtSize = 0;
 
 
-
-    public NumberedIndicator(Context context) {
+    public BubbleIndicator(Context context) {
         super(context);
         initialization();
     }
 
-    public NumberedIndicator(Context context,  AttributeSet attrs) {
+    public BubbleIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
         initialization();
     }
 
-    public NumberedIndicator(Context context,  AttributeSet attrs, int defStyleAttr) {
+    public BubbleIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initialization();
     }
-
-
-
-
-
 
     private void initialization() {
 
@@ -70,38 +62,35 @@ public class NumberedIndicator extends View {
 
         mPaintPercent = new Paint(Paint.ANTI_ALIAS_FLAG);
         // mPaintPercent.setColor(Color.CYAN);
-        mPaintPercent.setColor(Color.parseColor("#4AD562"));
+        mPaintPercent.setColor(CompletedBubbleColor);
 
+        mCompletePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCompletePaint.setColor(CompletedBubbleColor);
+        mCompletePaint.setStrokeCap(Paint.Cap.ROUND);
 
         mPaintline = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaintline.setColor(Color.parseColor("#4AD562"));
+        mPaintline.setColor(CompletedBubbleColor);
         mPaintline.setStrokeCap(Paint.Cap.SQUARE);
         mPaintline.setStrokeWidth(5);
 
         mPaintlineGray = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaintlineGray.setColor(Color.parseColor("#9B9B9B"));
+        mPaintlineGray.setColor(InCompleteBubbleColor);
         mPaintlineGray.setStrokeCap(Paint.Cap.SQUARE);
         mPaintlineGray.setStrokeWidth(5);
 
 
-        mCompletePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mCompletePaint.setColor(Color.parseColor("#4AD562"));
-        mCompletePaint.setStrokeCap(Paint.Cap.ROUND);
-
         mWorkingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mWorkingPaint.setColor(Color.parseColor("#4990E2"));
+        mWorkingPaint.setColor(WorkingBubbleColor);
         mWorkingPaint.setStrokeCap(Paint.Cap.ROUND);
 
         mInCompletePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mInCompletePaint.setColor(Color.parseColor("#9B9B9B"));
+        mInCompletePaint.setColor(InCompleteBubbleColor);
         mInCompletePaint.setStrokeCap(Paint.Cap.ROUND);
-
-
 
 
         mTextPaint = new Paint();
         //mTextPaint.setColor(Color.CYAN);
-        mTextPaint.setColor(Color.parseColor("#4AD562"));
+        mTextPaint.setColor(CompletedBubbleColor);
         // mTextPaint.setTextSize(textSize);
 
 
@@ -117,46 +106,47 @@ public class NumberedIndicator extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int xwidth=cellwidth;
-        /**
-         * Draw line first
-         */
-        if(selectedBubleNum!=0)
-        {
-            //blue line
-            canvas.drawLine(cellwidth,(desiredHeight/2),(cellwidth*(selectedBubleNum+1)),(desiredHeight/2),mPaintline);
-            //gray line
-            canvas.drawLine(cellwidth*(selectedBubleNum+1),(desiredHeight/2),(desiredWidth-cellwidth),(desiredHeight/2),mPaintlineGray);
-        }else{
-            canvas.drawLine(cellwidth,(desiredHeight/2),(desiredWidth-cellwidth),(desiredHeight/2),mPaintlineGray);
+
+        if (isDrawLine) {
+
+            /**
+             * Draw line first
+             */
+            if (selectedBubleNum != 0) {
+                //blue line
+                canvas.drawLine(cellwidth, (desiredHeight / 2), (cellwidth * (selectedBubleNum + 1)), (desiredHeight / 2), mPaintline);
+                //gray line
+                canvas.drawLine(cellwidth * (selectedBubleNum + 1), (desiredHeight / 2), (desiredWidth - cellwidth), (desiredHeight / 2), mPaintlineGray);
+            } else {
+                canvas.drawLine(cellwidth, (desiredHeight / 2), (desiredWidth - cellwidth), (desiredHeight / 2), mPaintlineGray);
+            }
         }
 
 
         /**
          * Draw circle
          */
-        for(int i=0;i<bubbleNum;i++){
-
-            if(i<selectedBubleNum)
-            {
+        int xwidth = cellwidth;
+        for (int i = 0; i < bubbleNum; i++)
+        {
+                //private Paint mCompletePaint,mWorkingPaint,mInCompletePaint;
+            if (i < selectedBubleNum) {
                 // canvas.drawLine(xwidth,(desiredHeight/2),(xwidth+cellwidth),(desiredHeight/2),mPaintline);
                 //canvas.drawCircle(xwidth, (desiredHeight / 2), largeBubbleRad, mWorkingPaint);
                 canvas.drawCircle(xwidth, (desiredHeight / 2), smallBubbleRad, mCompletePaint);
-            }else
-            if(i==selectedBubleNum) {
+            } else if (i == selectedBubleNum) {
                 //canvas.drawLine(xwidth,(desiredHeight/2),(xwidth+cellwidth),(desiredHeight/2),mPaintline);
-                canvas.drawCircle(xwidth, (desiredHeight / 2), largeBubbleRad, mWorkingPaint);
-            }else{
+                canvas.drawCircle(xwidth, (desiredHeight / 2), smallBubbleRad, mWorkingPaint);
+            } else {
                 canvas.drawCircle(xwidth, (desiredHeight / 2), smallBubbleRad, mInCompletePaint);
             }
-            xwidth+=cellwidth;
+            xwidth += cellwidth;
         }
 
 
-
-        int textWidth = (int) mTextPaintSmall.measureText(singleChar, 0, singleChar.length());
-        int diff=textWidth/2;
-        canvas.drawText(""+(selectedBubleNum+1),(cellwidth*(selectedBubleNum+1)-diff),(desiredHeight/2)+(diff+4),mTextPaintSmall);
+        /*int textWidth = (int) mTextPaintSmall.measureText(singleChar, 0, singleChar.length());
+        int diff = textWidth / 2;
+        canvas.drawText("" + (selectedBubleNum + 1), (cellwidth * (selectedBubleNum + 1) - diff), (desiredHeight / 2) + (diff + 4), mTextPaintSmall);*/
        /* mCenterTextposition=cellwidth*(selectedBubleNum+1)-diff;*/
 
 
@@ -178,8 +168,8 @@ public class NumberedIndicator extends View {
         int width;
         int height;
 
-        width=widthSize;
-        height=heightSize;
+        width = widthSize;
+        height = heightSize;
 
         /*//Measure Width
         if (widthMode == MeasureSpec.EXACTLY) {
@@ -203,27 +193,25 @@ public class NumberedIndicator extends View {
         //cellwidth=desiredWidth/(bubbleNum+1);
         //setWidgetHeight((int) (cellwidth*1.5));
 
-        setData(width,height);
+        setData(width, height);
         //getUpdateRadius();
 
-        setMeasuredDimension(desiredWidth,desiredHeight);
+        setMeasuredDimension(desiredWidth, desiredHeight);
         //setWidgetWidth(width);
 
     }
 
 
+    private void setData(int width, int height) {
+        cellwidth = width / (bubbleNum + 1);
+        largeBubbleRad = (cellwidth / 4) + 4;
+        smallBubbleRad = (cellwidth / 8);
 
-    private void setData(int width, int height)
-    {
-        cellwidth=width/(bubbleNum+1);
-        largeBubbleRad=(cellwidth/4)+4;
-        smallBubbleRad=(cellwidth/8);
-
-        txtSize=(2*largeBubbleRad)-14;
+        txtSize = (2 * largeBubbleRad) - 14;
         mTextPaintSmall.setTextSize(txtSize);
 
         setWidgetWidth(width);
-        setWidgetHeight((2*largeBubbleRad)+5);
+        setWidgetHeight((2 * largeBubbleRad) + 5);
 
         /*largeBubbleRad=(cellwidth/3)-4;
         smallBubbleRad=(cellwidth/3)-16;*/
@@ -248,14 +236,15 @@ public class NumberedIndicator extends View {
     }
 
 
-    public void setBubbleNumbers(int num){
-        this.bubbleNum=num;
+    public void setBubbleNumbers(int num) {
+        this.bubbleNum = num;
         invalidate();
     }
 
     public int getBubbleNum() {
         return bubbleNum;
     }
+
     public int getSelectedBubleNum() {
         return selectedBubleNum;
     }
@@ -266,7 +255,7 @@ public class NumberedIndicator extends View {
          */
 
 
-        if(selectedBubleNum<bubbleNum) {
+        if (selectedBubleNum < bubbleNum) {
             this.selectedBubleNum = selectedBubleNum;
             invalidate();
         }
@@ -276,31 +265,28 @@ public class NumberedIndicator extends View {
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
 
-        switch (action)
-        {
+        switch (action) {
 
             case MotionEvent.ACTION_DOWN:
                 float initialX = event.getX();
                 float initialY = event.getY();
 
-                Log.e("---"," x   "+initialX+"     y"+initialY);
+                Log.e("---", " x   " + initialX + "     y" + initialY);
                 //Log.d(TAG, "Action was DOWN");
 
                 //if((initialX/cellwidth)>=1 && (initialX%cellwidth)<=smallBubbleRad )
                 //if((initialX/cellwidth)>=1)
-                if((initialX>(cellwidth-largeBubbleRad)))
-                {
-                    int pos = (int) (initialX/cellwidth);
+                if ((initialX > (cellwidth - smallBubbleRad))) {
+                    int pos = (int) (initialX / cellwidth);
 
-                    if((initialX%cellwidth)>(cellwidth/2))
-                        pos=pos+1;
+                    if ((initialX % cellwidth) > (cellwidth / 2))
+                        pos = pos + 1;
 
-                    Log.e("---"," >=  "+((pos*cellwidth)-largeBubbleRad)+"     <= "+((pos*cellwidth)+largeBubbleRad));
-                    if(initialX>=((pos*cellwidth)-largeBubbleRad) && (initialX<((pos*cellwidth)+largeBubbleRad)))
-                    {
-                        if (initialY > ((desiredHeight / 2) - largeBubbleRad) && initialY < ((desiredHeight / 2) + largeBubbleRad)) {
+                    Log.e("---", " >=  " + ((pos * cellwidth) - smallBubbleRad) + "     <= " + ((pos * cellwidth) + smallBubbleRad));
+                    if (initialX >= ((pos * cellwidth) - smallBubbleRad) && (initialX < ((pos * cellwidth) + smallBubbleRad))) {
+                        if (initialY > ((desiredHeight / 2) - smallBubbleRad) && initialY < ((desiredHeight / 2) + smallBubbleRad)) {
                             if (mIndicatorClickListener != null) {
-                                mIndicatorClickListener.onBubbleClicked((pos-1));
+                                mIndicatorClickListener.onBubbleClicked((pos - 1));
                             }
                         }
                     }
@@ -341,7 +327,8 @@ public class NumberedIndicator extends View {
 
 
     /**
-     * Getter setter for indicator click listener
+     * getter setter for  Bubble click listener
+     *
      * @return
      */
     public IndicatorClickListener getIndicatorClickListener() {
@@ -352,18 +339,22 @@ public class NumberedIndicator extends View {
         this.mIndicatorClickListener = mIndicatorClickListener;
     }
 
+    /**
+     * Interface Bubble Clicklistener
+     */
+    public interface BubbleWidgetClickListener {
+
+        void onBubbleClicked(int bubbleNum);
+    }
+
     //
-    public void setCompleteBubbleColor(int color) {
-        //CompletedBubbleColor = completeBubbleColor;
-        mCompletePaint.setColor(color);
+    public boolean isDrawLine() {
+        return isDrawLine;
     }
 
-    public void setInCompleteBubbleColor(int color) {
-        mInCompletePaint.setColor(color);
+    public void setDrawLine(boolean drawLine) {
+        isDrawLine = drawLine;
     }
 
-    public void setWorkingBubbleColor(int color) {
-        mWorkingPaint.setColor(color);
-    }
 
 }
